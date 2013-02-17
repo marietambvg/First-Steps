@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BigestRangeInMatrix
+{
+    class BigestRange
+    {
+        static void Main(string[] args)
+        {
+            int[,] arr =         {{1,3,2,2,2,4},
+                                  {3,3,3,2,4,4},
+                                  {4,3,1,2,3,3},
+                                  {4,3,1,3,3,3},
+                                  {4,3,3,3,1,1}};
+            int[,]copy=new int[5,6];
+            int rows=arr.GetLength(0);
+            int cols=arr.GetLength(1);
+
+            PrintArray(arr);
+            Queue<int>qrow=new Queue<int>();
+            Queue<int>qcol=new Queue<int>();
+            
+            int maxlen=1;
+            for (int row = 0; row < 5; row++)
+            {
+                for (int col = 0; col < 6; col++)
+                {
+                    int len = 1;
+                    int r = row;
+                    int c = col;
+                    qrow.Enqueue(row);
+                    qcol.Enqueue(col);
+                    while (qrow.Count > 0)
+                    {
+                        if (c + 1 < cols)//check forword
+                        {
+                            if ((arr[r, c] == arr[r, c + 1]) && copy[r, c + 1] == 0)
+                            {
+                                len++;
+                                qrow.Enqueue(r);
+                                qcol.Enqueue(c + 1);
+                                copy[r, c + 1] = 1;
+                            }
+                        }
+                        if (r + 1 < rows)//check down
+                        {
+                            if ((arr[r, c] == arr[r + 1, c]) && copy[r + 1, c] == 0)
+                            {
+                                len++;
+                                qrow.Enqueue(r + 1);
+                                qcol.Enqueue(c);
+                                copy[r + 1, c] = 1;
+                            }
+                        }
+                        if (c - 1 >= 0)//check left
+                        {
+                            if ((arr[r, c] == arr[r, c - 1]) && copy[r, c - 1] == 0)
+                            {
+                                len++;
+                                qrow.Enqueue(r);
+                                qcol.Enqueue(c - 1);
+                                copy[r, c - 1] = 1;
+                            }
+                        }
+                        if (r - 1 >= 0)//check up
+                        {
+                            if ((arr[r, c] == arr[r - 1, c]) && copy[r - 1, c] == 0)
+                            {
+                                len++;
+                                qrow.Enqueue(r - 1);
+                                qcol.Enqueue(c);
+                                copy[r - 1, c]=1;
+                            }
+                        }
+
+                        copy[r, c] = 1;
+                        r = qrow.Dequeue();
+                        c = qcol.Dequeue();
+
+                    }
+                    if (len > maxlen) maxlen = len;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        for (int j = 0; j < 6; j++)
+                        {
+                            copy[i, j] = 0;
+                        }
+                    }
+                }
+            }
+            Console.WriteLine(maxlen);
+
+
+        }
+
+        private static void PrintArray(int[,] arr)
+        {
+            for (int row = 0; row < 5; row++)
+            {
+                for (int col = 0; col < 6; col++)
+                {
+                    Console.Write(arr[row, col] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+}
+
